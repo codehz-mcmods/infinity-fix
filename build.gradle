@@ -1,4 +1,5 @@
 plugins {
+    id 'me.qoomon.git-versioning' version '4.2.0'
     id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
 }
@@ -7,8 +8,27 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = '0.0.0-SNAPSHOT'
 group = project.maven_group
+
+gitVersioning.apply {
+    branch {
+        pattern = '💥'
+        versionFormat = '${version}'
+    }
+    branch {
+        pattern = 'feature/(?<feature>.+)'
+        versionFormat = '${feature}-SNAPSHOT'
+    }
+    branch {
+        pattern = 'pull/.+'
+        versionFormat = '${branch}-SNAPSHOT'
+    }
+    tag {
+        pattern = 'v(?<tagVersion>[0-9].*)'
+        versionFormat = '${tagVersion}'
+    }
+}
 
 dependencies {
     //to change the versions see the gradle.properties file
@@ -27,7 +47,7 @@ processResources {
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": version
     }
 }
 
@@ -47,7 +67,7 @@ tasks.withType(JavaCompile) {
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
+    archiveClassifier.set('sources')
     from sourceSets.main.allSource
 }
 
