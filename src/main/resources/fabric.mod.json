@@ -8,23 +8,19 @@
     "CodeHz"
   ],
   "contact": {
-    "website": "https://github.com/codehz/infinity_fix",
-    "repo": "https://github.com/codehz/infinity_fix"
+    "website": "https://github.com/codehz-mcmods/infinity-fix",
+    "repo": "https://github.com/codehz-mcmods/infinity-fix"
   },
   "license": "GPL-3.0",
   "icon": "assets/infinity-fix/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "one.codehz.mcmod.infinityfix.InfinityFix"
-    ]
-  },
+  "entrypoints": {},
   "mixins": [
     "infinity-fix.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.11.3",
     "fabric": "*",
-    "minecraft": ["1.16.x", "1.17.x"]
+    "minecraft": ["1.16.x", "1.17.x", "1.18.x"]
   }
 }

@@ -1,4 +1,4 @@
-package one.codehz.mcmod.infinityfix.mixin;
+package moe.hertz.infinity_fix.mixin;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.InfinityEnchantment;

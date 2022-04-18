@@ -1,33 +1,28 @@
 plugins {
-    id 'me.qoomon.git-versioning' version '4.2.0'
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'fabric-loom' version '0.12.10'
     id 'maven-publish'
+    id 'com.palantir.git-version' version '0.15.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = project.archives_base_name
+archivesBaseName = project.mod_id
 version = '0.0.0-SNAPSHOT'
 group = project.maven_group
 
-gitVersioning.apply {
-    branch {
-        pattern = '💥'
-        versionFormat = '${version}'
+try {
+    def details = versionDetails()
+    version = details.lastTag.substring(1)
+    if (details.commitDistance > 0) {
+        version += "+" + details.commitDistance + "." + details.gitHash;
     }
-    branch {
-        pattern = 'feature/(?<feature>.+)'
-        versionFormat = '${feature}-SNAPSHOT'
+    def ENV = System.getenv()
+    if (!ENV.GITHUB_ACTIONS && !ENV.JITPACK) {
+        version += details.isCleanTag ? "+local" : "+dirty"
     }
-    branch {
-        pattern = 'pull/.+'
-        versionFormat = '${branch}-SNAPSHOT'
-    }
-    tag {
-        pattern = 'v(?<tagVersion>[0-9].*)'
-        versionFormat = '${tagVersion}'
-    }
+} catch (ex) {
+    println ex
 }
 
 dependencies {
@@ -73,6 +68,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
     from "LICENSE"
+}
+
+java {
+    withSourcesJar()
 }
 
 // configure the maven publication
