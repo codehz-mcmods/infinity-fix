@@ -1,7 +1,7 @@
 plugins {
-    id 'me.qoomon.git-versioning' version '4.2.0'
     id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
+    id 'com.palantir.git-version' version '0.15.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -10,6 +10,20 @@ targetCompatibility = JavaVersion.VERSION_17
 archivesBaseName = project.archives_base_name
 version = '0.1.5'
 group = project.maven_group
+
+try {
+    def details = versionDetails()
+    version = details.lastTag.substring(1)
+    if (details.commitDistance > 0) {
+        version += "+" + details.commitDistance + "." + details.gitHash;
+    }
+    def ENV = System.getenv()
+    if (!ENV.GITHUB_ACTIONS && !ENV.JITPACK) {
+        version += details.isCleanTag ? "+local" : "+dirty"
+    }
+} catch (ex) {
+    println ex
+}
 
 repositories {
     maven {
