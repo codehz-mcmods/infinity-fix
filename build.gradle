@@ -1,33 +1,40 @@
 plugins {
-    id 'me.qoomon.git-versioning' version '4.2.0'
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
+    id 'com.palantir.git-version' version '0.15.0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
-version = '0.0.0-SNAPSHOT'
+version = '0.1.5'
 group = project.maven_group
 
-gitVersioning.apply {
-    branch {
-        pattern = '💥'
-        versionFormat = '${version}'
+try {
+    def details = versionDetails()
+    version = details.lastTag.substring(1)
+    if (details.commitDistance > 0) {
+        version += "+" + details.commitDistance + "." + details.gitHash;
     }
-    branch {
-        pattern = 'feature/(?<feature>.+)'
-        versionFormat = '${feature}-SNAPSHOT'
+    def ENV = System.getenv()
+    if (!ENV.GITHUB_ACTIONS && !ENV.JITPACK) {
+        version += details.isCleanTag ? "+local" : "+dirty"
     }
-    branch {
-        pattern = 'pull/.+'
-        versionFormat = '${branch}-SNAPSHOT'
+} catch (ex) {
+    println ex
+}
+
+repositories {
+    maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        mavenContent { snapshotsOnly() }
     }
-    tag {
-        pattern = 'v(?<tagVersion>[0-9].*)'
-        versionFormat = '${tagVersion}'
+    maven {
+        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        mavenContent { snapshotsOnly() }
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -41,6 +48,9 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
+    modImplementation("net.kyori:adventure-platform-fabric:5.5.0-SNAPSHOT") {
+        exclude group: "ca.stellardrift", module: "colonel"
+    }
 }
 
 processResources {
@@ -56,11 +66,6 @@ processResources {
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-
-    def targetVersion = 8
-    if (JavaVersion.current().isJava9Compatible()) {
-        it.options.release = targetVersion
-    }
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
