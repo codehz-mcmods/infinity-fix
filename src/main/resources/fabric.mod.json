@@ -8,15 +8,15 @@
         "CodeHz"
     ],
     "contact":       {
-        "website": "https://github.com/codehz/infinity_fix",
-        "repo":    "https://github.com/codehz/infinity_fix"
+        "website": "https://github.com/codehz-mcmods/infinity-fix",
+        "repo":    "https://github.com/codehz-mcmods/infinity-fix"
     },
     "license":       "MIT",
     "icon":          "assets/infinity-fix/icon.png",
     "environment":   "*",
     "entrypoints":   {
         "main": [
-            "one.codehz.mcmod.infinityfix.InfinityFix"
+            "moe.hertz.infinity_fix.InfinityFix"
         ]
     },
     "mixins":        [

@@ -1,4 +1,4 @@
-package one.codehz.mcmod.infinityfix;
+package moe.hertz.infinity_fix;
 
 
 import net.fabricmc.api.ModInitializer;
